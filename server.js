@@ -1,12 +1,12 @@
 const express=require('express')
 const app=express()
-const helmet = require('helmet');
+const cors = require('cors')
 require('dotenv').config()
 const {RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole} = require('agora-token')
 
 const port =process.env.port || 5000
 app.use(express.json());
-app.use(helmet());
+app.use(cors());
 
 const APP_ID = process.env.appId;
 const APP_CERTIFICATE = process.env.appCertificate;
