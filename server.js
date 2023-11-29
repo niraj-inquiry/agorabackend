@@ -11,33 +11,6 @@ app.use(cors());
 const APP_ID = process.env.appId;
 const APP_CERTIFICATE = process.env.appCertificate;
 
-const generateRtcToken = (channelName,uid) => {
-    // Rtc Examples
-    const appId = process.env.appId;
-    const appCertificate = process.env.appCertificate;
-    // const channelName = '';
-    // const uid='';
-    // const userAccount = "";
-    const role = RtcRole.PUBLISHER;
-  
-    const expirationTimeInSeconds = 3600
-  
-    const currentTimestamp = Math.floor(Date.now() / 1000)
-  
-    const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds
-  
-    // IMPORTANT! Build token with either the uid or with the user account. Comment out the option you do not want to use below.
-  
-    // Build token with uid
-    const tokenA = RtcTokenBuilder.buildTokenWithUid(appId, appCertificate, channelName, uid, role, privilegeExpiredTs);
-    console.log("Token With Integer Number Uid: " + tokenA);
-
-    return tokenA;
-  
-    // Build token with user account
-    // const tokenB = RtcTokenBuilder.buildTokenWithAccount(appId, appCertificate, channelName, userAccount, role, privilegeExpiredTs);
-    // console.log("Token With UserAccount: " + tokenB);
-  }
   
   const nocache = (_, resp, next) => {
     resp.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -105,7 +78,7 @@ const generateRtcToken = (channelName,uid) => {
       return resp.status(400).json({ 'error': 'uid is required' });
     }
     // get role
-    let role = RtmRole.Rtm_User;
+    let role = 'uid';
      // get the expire time
     let expireTime = req.query.expiry;
     if (!expireTime || expireTime === '') {
@@ -167,32 +140,6 @@ const generateRtcToken = (channelName,uid) => {
   app.get('/rtc/:channel/:role/:tokentype/:uid', nocache , generateRTCToken);
   app.get('/rtm/:uid/', nocache , generateRTMToken);
   app.get('/rte/:channel/:role/:tokentype/:uid', nocache , generateRTEToken);
-  app.post('/generate-token', async (req, res)=>{
-    const channelName=req.body.channelName;
-    const uid=req.body.uid;
-    try {
-        const token= await generateRtcToken(channelName,uid);
-        console.log({token});
-        res.status(200).json({
-            status:'Token Generated Sucessfully',
-            data:token
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            status:'Failed to Generate Token'
-        })
-    }
-  })
-
-
-// 
-
-  
-
-
-
-
 
 app.listen(port, ()=>{
     console.log(`server is running on ${port}`);
