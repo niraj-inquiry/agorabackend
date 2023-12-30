@@ -140,7 +140,9 @@ const APP_CERTIFICATE = process.env.appCertificate;
   app.get('/rtc/:channel/:role/:tokentype/:uid', nocache , generateRTCToken);
   app.get('/rtm/:uid/', nocache , generateRTMToken);
   app.get('/rte/:channel/:role/:tokentype/:uid', nocache , generateRTEToken);
-
+  app.get('/', (req, res)=>{
+    res.send("Hello")
+  })
 app.listen(port, ()=>{
     console.log(`server is running on ${port}`);
 })
