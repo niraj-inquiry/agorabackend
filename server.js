@@ -3,13 +3,42 @@ const app=express()
 const cors = require('cors')
 require('dotenv').config()
 const {RtcTokenBuilder, RtmTokenBuilder, RtcRole, RtmRole} = require('agora-token')
+const session = require('express-session');
+const passport = require('passport');
+const bodyParser = require("body-parser");
+const TelegramStrategy = require('passport-telegram-official').TelegramStrategy;
 
 const port =process.env.port || 5000
 app.use(express.json());
 app.use(cors());
 
+app.use(session({ secret: 'kjhdkjsdb12323bk23', resave: true, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 const APP_ID = process.env.appId;
 const APP_CERTIFICATE = process.env.appCertificate;
+
+passport.use(new TelegramStrategy({
+  botToken: process.env.botToken,
+  passReqToCallback: true 
+},
+function(profile, cb) {
+  // User.findOrCreate({ telegramId: profile.id }, function (err, user) {
+    return cb(err, user);
+  // });
+}
+));
+
+app.get('/auth/telegram',
+  passport.authenticate('telegram'),
+  function(req, res) {
+    console.log({req});
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  });
+
+
 
   
   const nocache = (_, resp, next) => {
@@ -143,6 +172,9 @@ const APP_CERTIFICATE = process.env.appCertificate;
   app.get('/', (req, res)=>{
     res.send("Hello")
   })
+
+
+
 app.listen(port, ()=>{
     console.log(`server is running on ${port}`);
 })
